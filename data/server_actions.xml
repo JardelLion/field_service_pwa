@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+   <record id="view_task_kanban_inherit_pwa" model="ir.ui.view">
+    <field name="name">project.task.kanban.pwa.inherit</field>
+    <field name="model">project.task</field>
+    <field name="inherit_id" ref="industry_fsm.project_task_action_fsm_no_quick_create"/>
+    <field name="arch" type="xml">
+        <xpath expr="//kanban" position="inside">
+            <header>
+                <button name="go_to_application" string="Go to PWA" type="object" class="btn-primary"/>
+            </header>
+        </xpath>
+    </field>
+</record>
+</odoo>
+

@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <template id="standalone_template" name="Filed Service PWA Template">
+        <t t-call="web.layout">
+            <t t-set="html_data"/>
+            <t t-set="head">
+                <title>Field Service App</title>
+                <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+                <meta http-equiv="content-type" content="text/html, charset=utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+                <link type="image/x-icon" rel="shortcut icon" t-att-href="'/field_service_pwa/static/description/icon.png'"/>
+                <link rel="manifest" t-att-href="'/field_service_pwa/manifest.json'"/>
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <t t-call-assets="field_service_pwa.assets_public_field_service_pwa" t-js="true"/>
+                <t t-call-assets="field_service_pwa.assets_public_field_service_pwa" t-css="true"/>
+            </t>
+                
+            <body class="field_service_pwa">
+            </body>
+            <script type="text/javascript">
+                var odoo = {
+                    csrf_token: "<t t-nocache="The csrf token must always be up to date." t-esc="request.csrf_token(None)"/>",
+                    debug: "<t t-out="debug"/>",
+                    __session_info__: <t t-esc="json.dumps(session_info)"/>,
+                };
+
+                const swPath = '/sw/field_service_pwa/sw-service_worker.js';
+                    const swScope = '/field_service_pwa/';
+
+                    if ("serviceWorker" in navigator) {
+                        window.addEventListener('load', () => {
+                            // Registering the SW at root, but restricting its scope to this portal instance
+                            navigator.serviceWorker.register(swPath, { 
+                                scope: swScope })
+                            .then(reg => console.log('SW Registered for portal:', reg.scope))
+                            .catch(err => console.error('SW Registration Error:', err));
+                        });
+                    }
+            </script>
+        </t>
+    </template>
+</odoo>

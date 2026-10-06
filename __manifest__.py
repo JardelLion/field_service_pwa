@@ -8,17 +8,29 @@
     'license': 'LGPL-3',
     'category': '',
     'depends': [
-        'industry_fsm'
+        'project','industry_fsm', 'web'
     ],
     'data': [
-        ''
-    ],
-    'demo': [
-        ''
-    ],
+        "data/server_actions.xml",
+        'views/standalone_app.xml',
+            
+        ],
+    'demo': [],
     'auto_install': False,
     'application': False,
-    'assets': {
-        
-    }
+     'assets': {
+        'web.assets_backend':[
+              "field_service_pwa/static/src/xml/project_task_control_panel.xml",
+              'field_service_pwa/static/src/js/project_task_control_panel.js'
+          ],
+        'field_service_pwa.assets_public_field_service_pwa': [
+            ('include', 'web._assets_core'),
+            ('remove', 'web/static/src/core/utils/transitions.scss'),
+            ('remove', 'web/static/src/core/**/*.scss'),
+
+            "field_service_pwa/static/src/field_service_app/**/*",
+            "field_service_pwa/static/src/field_service_app/componens/**/*",
+            "field_service_pwa/static/src/output.css"
+        ]     
+    },
 }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<template xml:space="preserve">
+    <t t-name="field_service_pwa.dashboard">
+        <div class="relative pt-[68px] h-screen">
+            <div class="flex items-start">
+                <!-- middle contents -->
+                <section class="main-content w-full overflow-auto p-6">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
+                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
+                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
+                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
+                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
+                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <footer>
+            <div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-neutral-primary-soft border-t border-default">
+                <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+                    <button type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-neutral-secondary-medium group">
+                        <svg class="w-6 h-6 mb-1 text-body group-hover:text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5"/></svg>
+                        <span class="text-sm text-body group-hover:text-fg-brand">Home</span>
+                    </button>
+                    <button type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-neutral-secondary-medium group">
+                        <svg class="w-6 h-6 mb-1 text-body group-hover:text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8H5m12 0a1 1 0 0 1 1 1v2.6M17 8l-4-4M5 8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.6M5 8l4-4 4 4m6 4h-4a2 2 0 1 0 0 4h4a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1Z"/></svg>
+                        <span class="text-sm text-body group-hover:text-fg-brand">Wallet</span>
+                    </button>
+                    <button type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-neutral-secondary-medium group">
+                        <svg class="w-6 h-6 mb-1 text-body group-hover:text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 4v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2m6-16v2m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v10m6-16v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2"/></svg>
+                        <span class="text-sm text-body group-hover:text-fg-brand">Settings</span>
+                    </button>
+                    <button type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-neutral-secondary-medium group">
+                        <svg class="w-6 h-6 mb-1 text-body group-hover:text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+                        <span class="text-sm text-body group-hover:text-fg-brand">Profile</span>
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </t>
+
+</template>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+     <t t-name="FieldSerivePWaControlPanel" t-inherit="project.ProjectTaskControlPanel" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o_control_panel_navigation')]" position="inside">
+             <button class="btn btn-secondary" t-on-click="() => this.onClickExtrenalLink()">
+                <i class="fa fa-external-link"/>
+            </button>
+        </xpath>
+    </t>
+</templates>
