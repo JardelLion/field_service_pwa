@@ -2,9 +2,9 @@
 <odoo>
     <template id="standalone_template" name="Filed Service PWA Template">
         <t t-call="web.layout">
+            <t t-set="title">Field Service App</t>
             <t t-set="html_data"/>
             <t t-set="head">
-                <title>Field Service App</title>
                 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
                 <meta http-equiv="content-type" content="text/html, charset=utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>

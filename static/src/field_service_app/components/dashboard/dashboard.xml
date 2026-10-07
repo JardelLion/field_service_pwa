@@ -6,12 +6,117 @@
                 <!-- middle contents -->
                 <section class="main-content w-full overflow-auto p-6">
                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
-                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
-                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
-                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
-                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
-                        <div class="bg-gray-100 w-full h-48 rounded-md"></div>
+                        <t t-foreach="state.tasks" t-as="task" t-key='task.id'>
+                            <div class="w-full h-48 rounded-lg border border-slate-300 bg-white p-4 shadow-sm font-sans text-slate-800">
+                            
+                                <h3 class="text-lg font-semibold text-slate-900 tracking-tight">
+                                    <t t-esc='task.name'/>
+                                </h3>
+
+                                
+                                <p class="mt-1 text-sm font-normal text-slate-500">
+                                    <t t-if='task.partner_id'>
+                                        <t t-esc='task.partner_id'/> <span class="mx-0.5">•</span> Fremont
+                                    </t>
+                                    
+                                </p>
+                                <t t-if='task.planned_date_begin and task.date_deadline'>
+                                     <!-- Horário e Datas -->
+                                    <div class="mt-3 flex items-center gap-2 text-sm font-medium text-slate-800">
+                                        <span><t t-esc="this.formatTaskTimeRange(task.planned_date_begin, task.date_deadline).date"/>,<t t-esc="this.formatTaskTimeRange(task.planned_date_begin, task.date_deadline).startTime"/></span>
+                                        <svg class="w-4 h-4 text-slate-700 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                        </svg>
+                                        <span><t t-esc="this.formatTaskTimeRange(task.planned_date_begin, task.date_deadline).endTime"/></span>
+                                    </div>
+                                </t>
+                               
+
+                                <!-- Rodapé com Ícones e Avatares -->
+                                <div class="mt-4 flex items-center justify-between pt-1">
+                                    <!-- Ícones da esquerda (Relógio e Estrelas) -->
+                                    <div class="flex items-center gap-3 text-slate-400">
+                                    <!-- Ícone de Relógio -->
+                                    <button class="hover:text-slate-600 transition-colors">
+                                        <svg class="w-5 h-5 text-slate-600 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="9" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2" />
+                                        </svg>
+                                    </button>
+
+                                    <div class="flex items-center gap-1 text-slate-300">
+                                        <t t-if="task.priority === '1'">
+                                            <!-- Estrela 1: Preenchida (Amarela) -->
+                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                        </t>
+                                        <t t-elif='task.priority ==="2"'>
+                                            <!-- Estrela 1: Preenchida (Amarela) -->
+                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                            <!-- Estrela 1: Preenchida (Amarela) -->
+                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                        </t>
+
+                                        <t t-elif='task.priority ==="3"'>
+                                            <!-- Estrela 1: Preenchida (Amarela) -->
+                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg><!-- Estrela 1: Preenchida (Amarela) -->
+                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg><!-- Estrela 1: Preenchida (Amarela) -->
+                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                        </t>
+
+                                        <t t-else="">
+                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                        </t>
+                                       
+                                    </div>
+                                    </div>
+
+                                    <!-- Avatares/Status da direita -->
+                                    <div class="flex items-center gap-1.5">
+                                    <!-- Imagem de usuário -->
+                                    <t t-if='task.user_ids'>
+                                        <t t-foreach="task.user_ids" t-as='user' t-key='user_index'>
+                                              <img t-att-src="'data:image/png;base64,' + this.getUserIcon(user)"
+                                                alt="User Avatar" 
+                                                class="w-7 h-7 rounded-lg bg-purple-100 object-cover"
+                                            />
+                                        </t>
+                                    </t>
+                                  
+                                    <!-- Círculo de status/estágio da tarefa 
+                                    <div class="w-6 h-6 rounded-full border-2 border-slate-300 bg-slate-100">Done</div>-->
+                                    </div> 
+                                </div>
+                            </div>
+                        </t>
                     </div>
                 </section>
             </div>

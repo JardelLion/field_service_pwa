@@ -29,12 +29,13 @@ class FieldServicePWAController(http.Controller):
         """
         return True
 
-    @route(["/field_service_pwa/login"], auth="public", website=True)
-    def standalone_app(self, **kwargs):
-        
+    @route(["/field_service_pwa/login",'/field_service_pwa/<int:user_id>'], auth="public", website=True)
+    def standalone_app(self,user_id=None, **kwargs):
         return request.render('field_service_pwa.standalone_template', {
-            'session_info': request.env['ir.http'].get_frontend_session_info(),
-        })
+                'user_id': user_id if user_id else False,
+                'session_info': request.env['ir.http'].get_frontend_session_info(),
+            })
+        
 
     @route("/field_service_pwa/auth", methods=['POST'], type='http', auth='public', cors='*', csrf=False)
     def login(self, **kwargs):
@@ -122,3 +123,44 @@ class FieldServicePWAController(http.Controller):
             ]
         }
         return request.make_json_response(manifest)
+
+    @http.route('/field_service_pwa/task', methods=['POST'], type='json', auth='public', cors='*', csrf=False)
+    def get_tasks(self, user_id=None, **kwargs):
+        if not user_id:
+            return {'success': False, 'error': 'Missing user_id'}
+
+        try:
+            user_id = int(user_id)
+        except (ValueError, TypeError):
+            return {'success': False, 'error': 'Invalid user_id format'}
+
+        # Fetch assigned tasks using search_read
+        tasks = request.env['project.task'].sudo().search_read(
+            domain=[('user_ids', 'in', [user_id])],
+            fields=[
+                'id', 'name', 'user_ids', 'project_id',
+                'date_deadline', 'allocated_hours', 'tag_ids',
+                'partner_id', 'state', 'description','priority','planned_date_begin'
+            ]
+        )
+
+        return {
+            'success': True,
+            'data': tasks,
+        }
+
+    
+    @http.route('/field_service_pwa/res_users', methods=['POST'], type='json', auth='public', cors='*', csrf=False)
+    def get_res_users(self, **kwargs):
+        # Fetch assigned tasks using search_read
+        users = request.env['res.users'].sudo().search_read(
+            domain=[('share', '=', False)],
+            fields=[
+                'id', 'name', 'phone', 'email','image_128','image_1024'
+            ]
+        )
+
+        return {
+            'success': True,
+            'data': users,
+        }

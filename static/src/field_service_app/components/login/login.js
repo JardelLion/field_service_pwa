@@ -3,13 +3,14 @@
 import { Component, useState } from "@odoo/owl";
 import { saveFrom, getAllFrom } from "@field_service_pwa/field_service_app/db/index_db";
 
-const DB_NAME = 'res.users';
-const STORE = 'res.users'
+const DB_NAME = 'hr.employee';
+const STORE = 'hr.employee'
 
 export class Login extends Component {
     static template = 'field_service_pwa.Login';
     static props = {
-        userId: { type: Number,optional: true}
+        userId: { type: Number,optional: true},
+        onnavigate: { type: Function, optional: true}
     };
 
     setup(){
@@ -38,15 +39,17 @@ export class Login extends Component {
 
             if (!response.ok) throw new Error (`Error: ${response.status}`)
             else {
-               const result = await response.json();
-              if (result.success){
-                this.props.userId = result.user_id
-                const data = {
-                   ...result.data
-                }
-                await saveFrom(DB_NAME, STORE, data)
-                this.state.loading = false;
-              } 
+                const result = await response.json();
+                if (result.success){
+                    const user_id = result.data.user_id
+                    const data = {
+                    ...result.data
+                    }
+                    await saveFrom(DB_NAME, STORE, data)
+                    this.state.loading = false;
+                    this.props.userId = user_id;
+                    this.props.onnavigate('dashboard', user_id)
+                } 
             }
        } catch(err){
        console.warn("Server unavaible, trying offline login ", err)
