@@ -2,10 +2,13 @@
 
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { rpc } from "@web/core/network/rpc";
-import { saveFrom, getData } from "@field_service_pwa/field_service_app/db/index_db";
-
+import { saveFrom } from "@field_service_pwa/field_service_app/db/index_db";
+import { TaskModal } from "@field_service_pwa/field_service_app/components/taskModal/task_modal";
 export class Dashboard extends Component {
     static template = 'field_service_pwa.dashboard';
+    static components = {
+        TaskModal
+    }
     static props = {
         userId: { type: Number, optional: true },
         onnavigate: { type: Function, optional: true }
@@ -16,13 +19,18 @@ export class Dashboard extends Component {
             standard_view: 'project',
             tasks: [],
             users: [],
-            projects: []
+            projects: [],
+            task: {},
+            partners: [],
+            isModalOpen: false
         })
 
         onWillStart(async () => {
-            await this.syncTask()
-            await this.syncUsers()
-          //  await syncProject()
+            this.state.loading = true;
+            await this.syncTask();
+            await this.syncUsers();
+            await this.syncProject();
+            await this.syncPartners();
         })
     }
 
@@ -87,12 +95,97 @@ export class Dashboard extends Component {
         }
     }
 
-    async syncProject(){
-        const project = await rpc(`/field_service_pwa/project/${this.props.userId}`);
+    async syncProject() {
+        if (!this.props.userId) {
+            console.warn("Cannot sync project: userId is missing from props.");
+            return;
+        }
+
+        try {
+            // Send payload object matching controller method parameters
+            const response = await rpc("/field_service_pwa/project", {
+                user_id: this.props.userId,
+            });
+
+            if (response && response.success) {
+                this.state.projects = [...response.data];
+                const records = response.data
+                await Promise.all(
+                    records.map((record) =>
+                        saveFrom('project', 'project', {
+                            ...record,
+                            id: record.id,
+                            createDate: Date.now(),
+                        })
+                    )
+                );
+            } else {
+                console.error("Failed to load projects:", response?.error);
+            }
+        } catch (error) {
+            console.error("Network or RPC error during project sync:", error);
+        } finally {
+            this.state.loading = false;
+        }
+    }
+
+    async syncPartners(){
+         if (!this.state.projects || !this.state.tasks) {
+            console.warn("Cannot sync Partners: userId is missing from props.");
+            return;
+        }
+
+        let partners = [];
+
+        if(this.state.projects){
+            this.state.projects.forEach(project => {
+                if(project.partner_id){
+                    partners.push(project.partner_id[0])
+                }
+            });
+        }
+        if(this.state.tasks){
+            this.state.tasks.forEach(task => {
+                if(task.partner_id){
+                    partners.push(task.partner_id[0])
+                }
+            })
+        }
+
+        try {
+            // Send payload object matching controller method parameters
+            const response = await rpc("/field_service_pwa/partners", {
+                partners: partners,
+            });
+
+            if (response && response.success) {
+                this.state.partners = [...response.data];
+                const records = response.data
+                await Promise.all(
+                    records.map((record) =>
+                        saveFrom('res.partner', 'res.partner', {
+                            ...record,
+                            id: record.id,
+                            createDate: Date.now(),
+                        })
+                    )
+                );
+            } else {
+                console.error("Failed to load Partners:", response?.error);
+            }
+        } catch (error) {
+            console.error("Network or RPC error during Partners sync:", error);
+        } finally {
+            this.state.loading = false;
+        }
 
     }
 
+
     getUserIcon(userId){
+        if(this.state.standard_view === 'project'){
+            userId = userId[0]
+        }
         if(userId){
             const userdData = this.state.users.find(user => user.id === parseInt(userId))
 
@@ -101,6 +194,14 @@ export class Dashboard extends Component {
         }
         return null
         
+    }
+    getPartnerObject(partnerArray){
+        const partner_id = this.state.partners.find(partner_id => partner_id.id === partnerArray[0])
+        return partner_id
+    }
+
+    setView(view){
+        this.state.standard_view = view;
     }
 
     /**
@@ -142,6 +243,17 @@ export class Dashboard extends Component {
             startTime: startTimeFormatted,
             endTime: endTimeFormatted,
         };
+    }
+
+    openTask(task){
+        if(Object.keys(task).length > 0){
+            this.state.task = task;
+            this.state.isModalOpen = true;
+        }
+    }
+
+    onClose(){
+        this.state.isModalOpen = false;
     }
 
 }

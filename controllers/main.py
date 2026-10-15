@@ -20,7 +20,7 @@ class FieldServicePWAController(http.Controller):
         data = portal._generate_schema_pwa() if hasattr(portal, '_generate_schema_pwa') else {}
         return data
 
-    @http.route('/field_service_pwa/health', type='json', auth='public', csrf=False)
+    @http.route('/field_service_pwa/health', type='jsonrpc', auth='public', csrf=False)
     def check_health(self):
         """
         Returns True to verify that the server is reachable and responding.
@@ -124,7 +124,7 @@ class FieldServicePWAController(http.Controller):
         }
         return request.make_json_response(manifest)
 
-    @http.route('/field_service_pwa/task', methods=['POST'], type='json', auth='public', cors='*', csrf=False)
+    @http.route('/field_service_pwa/task', methods=['POST'], type='jsonrpc', auth='public', cors='*', csrf=False)
     def get_tasks(self, user_id=None, **kwargs):
         if not user_id:
             return {'success': False, 'error': 'Missing user_id'}
@@ -149,8 +149,33 @@ class FieldServicePWAController(http.Controller):
             'data': tasks,
         }
 
+    @http.route('/field_service_pwa/project', methods=['POST'], type='jsonrpc', auth='public', cors='*', csrf=False)
+    def get_projects(self, user_id=None, **kwargs):
+        if not user_id:
+            return {'success': False, 'error': 'Missing user_id'}
+
+        try:
+            user_id = int(user_id)
+        except (ValueError, TypeError):
+            return {'success': False, 'error': 'Invalid user_id format'}
+
+        # Fetch assigned tasks using search_read
+        projects = request.env['project.project'].sudo().search_read(
+            domain=[('user_id', '=', user_id)],
+            fields=[
+                'id', 'name', 'user_id', 'label_tasks',
+                'date_start', 'allocated_hours', 'date',
+                'partner_id', 'description','tag_ids'
+            ]
+        )
+
+        return {
+            'success': True,
+            'data': projects,
+        }
+
     
-    @http.route('/field_service_pwa/res_users', methods=['POST'], type='json', auth='public', cors='*', csrf=False)
+    @http.route('/field_service_pwa/res_users', methods=['POST'], type='jsonrpc', auth='public', cors='*', csrf=False)
     def get_res_users(self, **kwargs):
         # Fetch assigned tasks using search_read
         users = request.env['res.users'].sudo().search_read(
@@ -163,4 +188,31 @@ class FieldServicePWAController(http.Controller):
         return {
             'success': True,
             'data': users,
+        }
+
+    @http.route('/field_service_pwa/partners', methods=['POST'], type='jsonrpc', auth='public', cors='*', csrf=False)
+    def get_res_partners(self, partners,**kwargs):
+        if not partners:
+            return {'success': False, 'error': 'Missing partners list'}
+
+        partners_ids = []
+
+        for partner in partners:
+            if partner in partners_ids:
+                continue
+            else:
+                partners_ids.append(partner)
+        partners_data = []
+        for id_ in partners_ids:
+            partner_id = request.env['res.partner'].sudo().search_read(
+                domain=[('id', '=', id_)],
+                fields=['id', 'name', 'phone', 'email', 'image_128', 'city', 'vat', 'street','street2']
+            )
+            if partner_id:
+                partners_data.extend(partner_id)
+       
+
+        return {
+            'success': True,
+            'data': partners_data,
         }

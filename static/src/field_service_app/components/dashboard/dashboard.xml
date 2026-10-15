@@ -1,140 +1,193 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <template xml:space="preserve">
     <t t-name="field_service_pwa.dashboard">
+        <TaskModal task="state.task"  users="state.users" isModalOpen='state.isModalOpen' onClose='() => this.onClose()'/>
         <div class="relative pt-[68px] h-screen">
             <div class="flex items-start">
                 <!-- middle contents -->
                 <section class="main-content w-full overflow-auto p-6">
                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <t t-foreach="state.tasks" t-as="task" t-key='task.id'>
-                            <div class="w-full h-48 rounded-lg border border-slate-300 bg-white p-4 shadow-sm font-sans text-slate-800">
-                            
-                                <h3 class="text-lg font-semibold text-slate-900 tracking-tight">
-                                    <t t-esc='task.name'/>
-                                </h3>
-
-                                
-                                <p class="mt-1 text-sm font-normal text-slate-500">
-                                    <t t-if='task.partner_id'>
-                                        <t t-esc='task.partner_id'/> <span class="mx-0.5">•</span> Fremont
-                                    </t>
+                
+                            <t t-if='state.standard_view === "task"'>    
+                                <t t-foreach="state.tasks" t-as="task" t-key='task.id'>
+                                    <div role='button' t-on-click='()=> this.openTask(task)' class="w-full h-48 rounded-lg border border-slate-300 bg-white p-4 shadow-sm font-sans text-slate-800">
                                     
-                                </p>
-                                <t t-if='task.planned_date_begin and task.date_deadline'>
-                                     <!-- Horário e Datas -->
-                                    <div class="mt-3 flex items-center gap-2 text-sm font-medium text-slate-800">
-                                        <span><t t-esc="this.formatTaskTimeRange(task.planned_date_begin, task.date_deadline).date"/>,<t t-esc="this.formatTaskTimeRange(task.planned_date_begin, task.date_deadline).startTime"/></span>
-                                        <svg class="w-4 h-4 text-slate-700 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                        </svg>
-                                        <span><t t-esc="this.formatTaskTimeRange(task.planned_date_begin, task.date_deadline).endTime"/></span>
+                                        <h3 class="text-lg font-semibold text-slate-900 tracking-tight">
+                                            <t t-esc='task.name'/>
+                                        </h3>
+
+                                        
+                                        <p class="mt-1 text-sm font-normal text-slate-500">
+                                            <t t-if='task.partner_id'>
+                                                <t t-if='task.partner_id'>
+                                                    <t t-esc='this.getPartnerObject(task.partner_id).name'/> <span class="mx-0.5">•</span> <t t-if='this.getPartnerObject(task.partner_id).city'><t t-esc="this.getPartnerObject(task.partner_id).city"/> </t>
+                                                </t>
+                                            </t>
+                                            
+                                        </p>
+                                        <t t-if='task.planned_date_begin and task.date_deadline'>
+                                            <!-- Horário e Datas -->
+                                            <div class="mt-3 flex items-center gap-2 text-sm font-medium text-slate-800">
+                                                <span><t t-esc="this.formatTaskTimeRange(task.planned_date_begin, task.date_deadline).date"/>,<t t-esc="this.formatTaskTimeRange(task.planned_date_begin, task.date_deadline).startTime"/></span>
+                                                <svg class="w-4 h-4 text-slate-700 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                                </svg>
+                                                <span><t t-esc="this.formatTaskTimeRange(task.planned_date_begin, task.date_deadline).endTime"/></span>
+                                            </div>
+                                        </t>
+                                    
+
+                                        <!-- Rodapé com Ícones e Avatares -->
+                                        <div class="mt-4 flex items-center justify-between pt-1">
+                                            <!-- Ícones da esquerda (Relógio e Estrelas) -->
+                                            <div class="flex items-center gap-3 text-slate-400">
+                                            <!-- Ícone de Relógio -->
+                                            <button class="hover:text-slate-600 transition-colors">
+                                                <svg class="w-5 h-5 text-slate-600 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <circle cx="12" cy="12" r="9" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2" />
+                                                </svg>
+                                            </button>
+
+                                            <div class="flex items-center gap-1 text-slate-300">
+                                                <t t-if="task.priority === '1'">
+                                                    <!-- Estrela 1: Preenchida (Amarela) -->
+                                                    <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg>
+                                                    <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg>
+                                                    <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg>
+                                                </t>
+                                                <t t-elif='task.priority ==="2"'>
+                                                    <!-- Estrela 1: Preenchida (Amarela) -->
+                                                    <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg>
+                                                    <!-- Estrela 1: Preenchida (Amarela) -->
+                                                    <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg>
+                                                    <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg>
+                                                </t>
+
+                                                <t t-elif='task.priority ==="3"'>
+                                                    <!-- Estrela 1: Preenchida (Amarela) -->
+                                                    <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg><!-- Estrela 1: Preenchida (Amarela) -->
+                                                    <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg><!-- Estrela 1: Preenchida (Amarela) -->
+                                                    <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg>
+                                                </t>
+
+                                                <t t-else="">
+                                                    <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg>
+                                                    <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg>
+                                                    <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                                    </svg>
+                                                </t>
+                                            
+                                            </div>
+                                            </div>
+
+                                            <!-- Avatares/Status da direita -->
+                                            <div class="flex items-center gap-1.5">
+                                            <!-- Imagem de usuário -->
+                                            <t t-if='task.user_ids'>
+                                                <t t-foreach="task.user_ids" t-as='user' t-key='user_index'>
+                                                    <img t-att-src="'data:image/png;base64,' + this.getUserIcon(user)"
+                                                        alt="User Avatar" 
+                                                        class="w-7 h-7 rounded-lg bg-purple-100 object-cover"
+                                                    />
+                                                </t>
+                                            </t>
+                                        
+                                            <!-- Círculo de status/estágio da tarefa 
+                                            <div class="w-6 h-6 rounded-full border-2 border-slate-300 bg-slate-100">Done</div>-->
+                                            </div> 
+                                        </div>
                                     </div>
                                 </t>
-                               
+                            </t>
+                            <t t-elif="state.standard_view === 'project'">
+                                <t t-foreach="state.projects" t-as="project" t-key='project.id'>
+                                    <div role='button' t-on-click='()=> this.openTask(project)' class="w-full h-48 rounded-lg border border-slate-300 bg-white p-4 shadow-sm font-sans text-slate-800">
+                                    
+                                        <h3 class="text-lg font-semibold text-slate-900 tracking-tight">
+                                            <t t-esc='project.name'/>
+                                        </h3>
 
-                                <!-- Rodapé com Ícones e Avatares -->
-                                <div class="mt-4 flex items-center justify-between pt-1">
-                                    <!-- Ícones da esquerda (Relógio e Estrelas) -->
-                                    <div class="flex items-center gap-3 text-slate-400">
-                                    <!-- Ícone de Relógio -->
-                                    <button class="hover:text-slate-600 transition-colors">
-                                        <svg class="w-5 h-5 text-slate-600 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <circle cx="12" cy="12" r="9" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2" />
-                                        </svg>
-                                    </button>
+                                        <t t-set-slot='city'>
+                                            
+                                        </t>
+                                        <p class="mt-1 text-sm font-normal text-slate-500">
+                                            <t t-if='project.partner_id'>
+                                                <t t-esc='this.getPartnerObject(project.partner_id).name'/> <span class="mx-0.5">•</span> <t t-if='this.getPartnerObject(project.partner_id).city'><t t-esc="this.getPartnerObject(project.partner_id).city"/> </t>
+                                            </t>
+                                            
+                                        </p>
+                                        <t t-if='project.date_start and project.date'>
+                                            <!-- Horário e Datas -->
+                                            <div class="mt-3 flex items-center gap-2 text-sm font-medium text-slate-800">
+                                                <span><t t-esc="this.formatTaskTimeRange(project.date_start, project.date).date"/>,<t t-esc="this.formatTaskTimeRange(project.date_start, project.date).startTime"/></span>
+                                                <svg class="w-4 h-4 text-slate-700 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                                </svg>
+                                                <span><t t-esc="this.formatTaskTimeRange(project.date_start, project.date).endTime"/></span>
+                                            </div>
+                                        </t>
+                                    
 
-                                    <div class="flex items-center gap-1 text-slate-300">
-                                        <t t-if="task.priority === '1'">
-                                            <!-- Estrela 1: Preenchida (Amarela) -->
-                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg>
-                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg>
-                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg>
-                                        </t>
-                                        <t t-elif='task.priority ==="2"'>
-                                            <!-- Estrela 1: Preenchida (Amarela) -->
-                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg>
-                                            <!-- Estrela 1: Preenchida (Amarela) -->
-                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg>
-                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg>
-                                        </t>
+                                        <!-- Rodapé com Ícones e Avatares -->
+                                        <div class="mt-4 flex items-center justify-between pt-1">
+                                            <!-- Ícones da esquerda (Relógio e Estrelas) -->
+                                            <div class="flex items-center gap-3 text-slate-400">
+                                            </div>
 
-                                        <t t-elif='task.priority ==="3"'>
-                                            <!-- Estrela 1: Preenchida (Amarela) -->
-                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg><!-- Estrela 1: Preenchida (Amarela) -->
-                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg><!-- Estrela 1: Preenchida (Amarela) -->
-                                            <svg class="w-5 h-5 text-amber-400 fill-amber-400 stroke-[1.5]" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg>
-                                        </t>
-
-                                        <t t-else="">
-                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg>
-                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg>
-                                            <svg class="w-5 h-5 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                                            </svg>
-                                        </t>
-                                       
+                                            <!-- Avatares/Status da direita -->
+                                            <div class="flex items-center gap-1.5">
+                                                <!-- Imagem de usuário -->
+                                                <t t-if='project.user_id'>
+                                                    <img t-att-src="'data:image/png;base64,' + this.getUserIcon(project.user_id)"
+                                                        alt="User Avatar" 
+                                                        class="w-7 h-7 rounded-lg bg-purple-100 object-cover"
+                                                    />
+                                                </t>
+                                            </div> 
+                                        </div>
                                     </div>
-                                    </div>
-
-                                    <!-- Avatares/Status da direita -->
-                                    <div class="flex items-center gap-1.5">
-                                    <!-- Imagem de usuário -->
-                                    <t t-if='task.user_ids'>
-                                        <t t-foreach="task.user_ids" t-as='user' t-key='user_index'>
-                                              <img t-att-src="'data:image/png;base64,' + this.getUserIcon(user)"
-                                                alt="User Avatar" 
-                                                class="w-7 h-7 rounded-lg bg-purple-100 object-cover"
-                                            />
-                                        </t>
-                                    </t>
-                                  
-                                    <!-- Círculo de status/estágio da tarefa 
-                                    <div class="w-6 h-6 rounded-full border-2 border-slate-300 bg-slate-100">Done</div>-->
-                                    </div> 
-                                </div>
-                            </div>
-                        </t>
+                                </t>
+                            </t>
+                        
                     </div>
                 </section>
             </div>
         </div>
-        <footer>
+        <t t-if='!state.isModalOpen'>
+              <footer>
             <div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-neutral-primary-soft border-t border-default">
                 <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
-                    <button type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-neutral-secondary-medium group">
-                        <svg class="w-6 h-6 mb-1 text-body group-hover:text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5"/></svg>
-                        <span class="text-sm text-body group-hover:text-fg-brand">Home</span>
-                    </button>
-                    <button type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-neutral-secondary-medium group">
+                    <button type="button" t-on-click='() => this.setView("project")' class="inline-flex flex-col items-center justify-center px-5 hover:bg-neutral-secondary-medium group">
                         <svg class="w-6 h-6 mb-1 text-body group-hover:text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8H5m12 0a1 1 0 0 1 1 1v2.6M17 8l-4-4M5 8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.6M5 8l4-4 4 4m6 4h-4a2 2 0 1 0 0 4h4a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1Z"/></svg>
-                        <span class="text-sm text-body group-hover:text-fg-brand">Wallet</span>
+                        <span class="text-sm text-body group-hover:text-fg-brand">Project</span>
                     </button>
-                    <button type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-neutral-secondary-medium group">
+                    <button type="button" t-on-click='() => this.setView("task")' class="inline-flex flex-col items-center justify-center px-5 hover:bg-neutral-secondary-medium group">
                         <svg class="w-6 h-6 mb-1 text-body group-hover:text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 4v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2m6-16v2m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v10m6-16v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2"/></svg>
-                        <span class="text-sm text-body group-hover:text-fg-brand">Settings</span>
+                        <span class="text-sm text-body group-hover:text-fg-brand">Task</span>
                     </button>
                     <button type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-neutral-secondary-medium group">
                         <svg class="w-6 h-6 mb-1 text-body group-hover:text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
@@ -143,6 +196,8 @@
                 </div>
             </div>
         </footer>
+        </t>
+      
     </t>
 
 </template>

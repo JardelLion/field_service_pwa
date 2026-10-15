@@ -2,7 +2,7 @@
 <template xml:space="preserve">
     <t t-name="field_service_pwa.task_modal">
 
-        <div class="fixed inset-0 bg-gray-900/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div t-att-class="`fixed inset-0 bg-gray-900/50 items-center justify-center p-4 z-50 overflow-y-auto ${props.isModalOpen ? 'flex': 'hidden' }`">
         <!-- Modal Card Container -->
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-xl my-8 overflow-hidden text-gray-800 font-sans border border-gray-100">
             
@@ -23,7 +23,7 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
                 </button>
                 <!-- Close Icon -->
-                <button class="p-1 hover:text-gray-700 transition">
+                <button class="p-1 hover:text-gray-700 transition" t-on-click='()=> this.onClose()'>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -35,29 +35,29 @@
             <!-- Title Input -->
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">Title</label>
-                <input type="text" value="Redesign Flowbite homepage" class="w-full bg-gray-50/50 border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" />
+                <input type="text" t-att-value="props.task.name" class="w-full bg-gray-50/50 border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" />
             </div>
 
             <!-- Description Textarea -->
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">Description</label>
-                <textarea rows="9" class="w-full bg-gray-50/50 border border-gray-300 rounded-xl p-4 text-gray-700 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none resize-y leading-relaxed">Redesigning a homepage can be a powerful way to improve user experience, engagement, and overall brand perception.
-
-        Here are some tips for a successful homepage redesign: <span class="border-b border-red-400 border-dashed">User-Centric</span> Approach:
-
-        Prioritize the needs and expectations of your target audience. Conduct user research, analyze user behavior, and consider feedback to understand what elements are most valuable to them.</textarea>
+                <textarea rows="9" class="w-full bg-gray-50/50 border border-gray-300 rounded-xl p-4 text-gray-700 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none resize-y leading-relaxed">
+                    <t t-esc='props.task.description'/>
+                </textarea>
             </div>
 
-            <!-- Assignee & Communication -->
+        
             <div class="space-y-3">
                 <label class="block text-sm font-semibold text-gray-800">Assignee Communication</label>
                 <div class="flex items-center space-x-3">
                 <!-- User Avatars Group -->
                 <div class="flex -space-x-2 overflow-hidden">
-                    <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" alt="Avatar 1"/>
-                    <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="Avatar 2"/>
-                    <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Avatar 3"/>
-                    <span class="inline-flex items-center justify-center h-8 w-8 rounded-full ring-2 ring-white bg-slate-800 text-white text-xs font-medium">+9</span>
+                    <t t-if='props.task.user_ids'>
+                        <t t-foreach="props.task.user_ids" t-as='user' t-key='user_index'>
+                            <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" t-att-src="'data:image/png;base64,' + this.getUserIcon(user)" alt="Users"/>
+                        </t>
+                    </t>
+                    
                 </div>
                 <!-- Add Member Button -->
                 <button class="inline-flex items-center space-x-1.5 border border-gray-300 rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-800 hover:bg-gray-50 transition">
@@ -249,7 +249,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 <span>Add new task</span>
             </button>
-            <button class="border border-gray-300 hover:bg-gray-50 text-gray-800 font-medium px-5 py-2.5 rounded-xl text-xs transition">
+            <button class="border border-gray-300 hover:bg-gray-50 text-gray-800 font-medium px-5 py-2.5 rounded-xl text-xs transition" t-on-click="() => this.onClose()">
                 Cancel
             </button>
             </div>

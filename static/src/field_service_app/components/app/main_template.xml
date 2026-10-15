@@ -5,8 +5,7 @@
                  <Login userId="props.userId" onnavigate.bind="setPage"/>
             </t>
             <t t-if='state.currentPath === "dashboard"'>
-                <TaskModal/>
-                <!-- <Dashboard userId="state.userId" onnavigate.bind="setPage"/> -->
+                <Dashboard userId="state.userId" onnavigate.bind="setPage"/>
             </t>
     </t>
 </template>
