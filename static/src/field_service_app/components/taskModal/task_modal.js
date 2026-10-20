@@ -8,7 +8,8 @@ export class TaskModal extends Component {
         task: { type: Object, optional: true },
         users: { type: Object, optional: true },
         isModalOpen: { type: Boolean, optional: true },
-        onClose: { type: Function, optional: true }
+        onClose: { type: Function, optional: true },
+        view: { type: String, optional: true }
     }
 
     setup() {
@@ -34,6 +35,10 @@ export class TaskModal extends Component {
 
     onClose(){
         this.props.onClose();
+    }
+
+    priorityLevel(level){
+        this.props.task.priority = level;
     }
 
    

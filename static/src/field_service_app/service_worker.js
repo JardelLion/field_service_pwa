@@ -1,6 +1,6 @@
 const CACHE_VERSION = 'v1';
 // Scope-based cache name ensures different portals don't conflict
-const getCacheName = `field_service_pwa-${CACHE_VERSION}`
+const getCacheName = () => `field_service_pwa-${self.registration.scope}-${CACHE_VERSION}`;
 
 // Ensure offlineUrl is a valid path on your portal
 const offlineUrl = '/offline'; 
@@ -26,44 +26,44 @@ self.addEventListener("activate", (event) => {
     );
 });
 //just for not clone the site right now
-// self.addEventListener("fetch", (event) => {
-//     const { request } = event;
-//     const url = new URL(request.url);
+self.addEventListener("fetch", (event) => {
+    const { request } = event;
+    const url = new URL(request.url);
 
-//     if (!url.protocol.startsWith("http")) {
-//         return;
-//     }
+    if (!url.protocol.startsWith("http")) {
+        return;
+    }
 
-//     // Skip Odoo's internal /longpolling or /websocket requests
-//     if (url.pathname.includes("/longpolling")) return;
+    // Skip Odoo's internal /longpolling or /websocket requests
+    if (url.pathname.includes("/longpolling")) return;
 
-//     event.respondWith(
-//         caches.open(getCacheName()).then(async (cache) => {
-//             // Check if already in cache
-//             const cachedResponse = await cache.match(request);
-//             if (cachedResponse) return cachedResponse;
+    event.respondWith(
+        caches.open(getCacheName()).then(async (cache) => {
+            // Check if already in cache
+            const cachedResponse = await cache.match(request);
+            if (cachedResponse) return cachedResponse;
 
-//             // If not, fetch from network
-//             try {
-//                 const response = await fetch(request);
-//                 // Only cache successful, GET requests
-//                 if (response && response.status === 200 && request.method === "GET") {
-//                     cache.put(request, response.clone());
-//                 }
-//                 return response;
-//             } catch (err) {
-//                 // Offline and not in cache
-//                 if (request.mode === "navigate") {
-//                     const offlineResponse = await cache.match(offlineUrl);
-//                     if (offlineResponse) return offlineResponse;
-//                 }
+            // If not, fetch from network
+            try {
+                const response = await fetch(request);
+                // Only cache successful, GET requests
+                if (response && response.status === 200 && request.method === "GET") {
+                    cache.put(request, response.clone());
+                }
+                return response;
+            } catch (err) {
+                // Offline and not in cache
+                if (request.mode === "navigate") {
+                    const offlineResponse = await cache.match(offlineUrl);
+                    if (offlineResponse) return offlineResponse;
+                }
 
-//                 console.warn("SW fetch failed, no cache available:", request.url);
-//                 return new Response("", {
-//                     status: 503,
-//                     statusText: "Offline - resource not cached",
-//                 });
-//             }
-//         })
-//     );
-// });
+                console.warn("SW fetch failed, no cache available:", request.url);
+                return new Response("", {
+                    status: 503,
+                    statusText: "Offline - resource not cached",
+                });
+            }
+        })
+    );
+});

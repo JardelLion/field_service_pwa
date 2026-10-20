@@ -99,7 +99,7 @@ class FieldServicePWAController(http.Controller):
         icon_path = '/field_service_pwa/static/description/icon.png'
         
         manifest = {
-            "id": "/field_service_pwa/",
+            "id": "1.0.0",
             "name": "Field Service Pwa",
             "short_name": "Field Service",
             "scope": "/field_service_pwa/",

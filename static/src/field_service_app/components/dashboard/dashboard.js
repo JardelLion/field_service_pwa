@@ -2,7 +2,7 @@
 
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { rpc } from "@web/core/network/rpc";
-import { saveFrom } from "@field_service_pwa/field_service_app/db/index_db";
+import { saveFrom, getAllFrom } from "@field_service_pwa/field_service_app/db/index_db";
 import { TaskModal } from "@field_service_pwa/field_service_app/components/taskModal/task_modal";
 export class Dashboard extends Component {
     static template = 'field_service_pwa.dashboard';
@@ -51,7 +51,7 @@ export class Dashboard extends Component {
                 const records = response.data
                 await Promise.all(
                     records.map((record) =>
-                        saveFrom('task', 'task', {
+                        saveFrom('project.task', 'project.task', {
                             ...record,
                             id: record.id,
                             createDate: Date.now(),
@@ -60,6 +60,8 @@ export class Dashboard extends Component {
                 );
             } else {
                 console.error("Failed to load tasks:", response?.error);
+                const tasks = await getAllFrom('project.task', 'project.task')
+                this.states.tasks = [...tasks]
             }
         } catch (error) {
             console.error("Network or RPC error during task sync:", error);
@@ -87,6 +89,8 @@ export class Dashboard extends Component {
                 );
             } else {
                 console.error("Failed to load tasks:", response?.error);
+                const users = await getAllFrom('res.users', 'res.users')
+                this.states.tasks = [...users]
             }
         } catch (error) {
             console.error("Network or RPC error during task sync:", error);
@@ -112,7 +116,7 @@ export class Dashboard extends Component {
                 const records = response.data
                 await Promise.all(
                     records.map((record) =>
-                        saveFrom('project', 'project', {
+                        saveFrom('project.project', 'project.project', {
                             ...record,
                             id: record.id,
                             createDate: Date.now(),
@@ -121,6 +125,8 @@ export class Dashboard extends Component {
                 );
             } else {
                 console.error("Failed to load projects:", response?.error);
+                const projects = await getAllFrom('project.project', 'project.project')
+                this.states.projects = [...projects]
             }
         } catch (error) {
             console.error("Network or RPC error during project sync:", error);
@@ -172,6 +178,8 @@ export class Dashboard extends Component {
                 );
             } else {
                 console.error("Failed to load Partners:", response?.error);
+                const partners = await getAllFrom('res.partner', 'res.partner')
+                this.states.partners = [...partners]
             }
         } catch (error) {
             console.error("Network or RPC error during Partners sync:", error);

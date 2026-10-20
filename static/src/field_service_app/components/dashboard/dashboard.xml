@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <template xml:space="preserve">
     <t t-name="field_service_pwa.dashboard">
-        <TaskModal task="state.task"  users="state.users" isModalOpen='state.isModalOpen' onClose='() => this.onClose()'/>
+        <TaskModal task="state.task" view='state.standard_view' users="state.users" isModalOpen='state.isModalOpen' onClose='() => this.onClose()'/>
         <div class="relative pt-[68px] h-screen">
             <div class="flex items-start">
                 <!-- middle contents -->
